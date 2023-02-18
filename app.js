@@ -1,9 +1,24 @@
 const express=require("express")
+const morgan=require("morgan")
 const fs=require("fs")
 
 const app=express()
 
+// GLOBAL MIDDLEWARE
 app.use(express.json())
+app.use(morgan("dev"))
+
+
+// CUSTOM MIDDLEWARE
+app.use((req,res,next)=>{
+  console.log("Hello from the middleware!");
+  next()
+})
+
+app.use((req,res,next)=>{
+  req.requestTime=new Date().toISOString()
+  next()
+})
 
 // LISTENING FIRST REQUEST
 // app.get("/",(req,res)=>{
@@ -23,6 +38,7 @@ const tours=JSON.parse(fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.
 app.get("/api/v1/tours",(req,res)=>{
     res.status(200).json({
         status:"success",
+        requestedAt:req.requestTime,
         results:tours.length,
         data:{
             tours
