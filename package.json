@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon server.js",
+    "start":"cross-env NODE_ENV=production nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,6 +20,8 @@
   },
   "homepage": "https://github.com/Umer-siddique/NA-Tours-Api#readme",
   "dependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3",
     "express": "4.16.4",
     "morgan": "^1.10.0"
   }
