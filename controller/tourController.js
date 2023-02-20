@@ -28,6 +28,7 @@ const checkBody=(req,res,next)=>{
         message:"Missing value price or name"
     })
    }
+   next()
 }
   
 const createTour = (req,res)=>{

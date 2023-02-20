@@ -1,13 +1,14 @@
 const express=require("express")
 const morgan=require("morgan")
-const env=require("dotenv")
 const tourRoutes=require("./routes/tourRoutes")
 
 const app=express()
 
-env.config({path:"./config.env"})
 // GLOBAL MIDDLEWARE
 app.use(express.json())
+//FOR SERVING STATIC FILES
+// app.use(express.static("example_path:__dirname/public")) 
+
 if(process.env.NODE_ENV==="development"){
     app.use(morgan("dev"))
 }
