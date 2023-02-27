@@ -4,11 +4,15 @@ const toursSchema=new mongoose.Schema({
     name:{
         type:String,
         required:[true,"A tour must have a name"],
-        unique:true
+        unique:true,
+        trim:true
     },
     price:{
         type:Number,
         required:[true,"A tour must have a price"],
+    },
+    priceDiscount:{
+        type:Number
     },
     duration:{
         type:Number,
@@ -24,6 +28,7 @@ const toursSchema=new mongoose.Schema({
     },
     ratingsQuantity:{
         type:Number,
+        default:0
     },
     maxGroupSize:{
         type:Number,
@@ -34,7 +39,8 @@ const toursSchema=new mongoose.Schema({
         required:[true,"A tour must have a description"]
     },
     description:{
-        type:String
+        type:String,
+        trim:true
     },
     imageCover:{
         type:String,

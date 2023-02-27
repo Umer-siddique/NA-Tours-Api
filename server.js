@@ -4,6 +4,9 @@ const connectDb=require("./config/db")
 
 const app=require("./app")
 
+
+
+
 // DATABASE CONNECTION
 connectDb()
 
