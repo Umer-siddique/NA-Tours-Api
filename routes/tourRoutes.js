@@ -1,10 +1,12 @@
 const express=require("express")
-const {createTour,getAllTours,getTour,updateTour,deleteTour}=require("../controller/tourController")
+const {createTour,getAllTours,getTour,updateTour,deleteTour,aliasTour}=require("../controller/tourController")
 
 const router=express.Router()
 
 // PARAM MIDDLEWARE
 // router.param('id',checkID);
+
+router.route("/top-5-cheap").get(aliasTour,getAllTours)
 
 router.route("/")
 .get(getAllTours)

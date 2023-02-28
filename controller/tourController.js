@@ -32,6 +32,13 @@ const Tour=require("../model/toursSchema")
 //    }
 //    next()
 // }
+
+const aliasTour=(req,res,next)=>{
+   req.query.limit=5,
+   req.query.sort='ratingsAverage,-price',
+   req.query.fields='name,price,ratingsAverage,difficulty,summary',
+   next()
+}
   
 const createTour = async(req,res)=>{
     // const newId=tours[tours.length-1].id+1;
@@ -112,6 +119,10 @@ const getAllTours = async(req, res) => {
 
         query=query.skip(skip).limit(limit);
 
+        if(skip>=limit){
+            throw new Error("No data found on this page!")
+        }
+        
         console.log(req.query)
         const tours=await query;
          
@@ -232,4 +243,4 @@ const deleteTour = async(req,res)=>{
     })
 };
 
-module.exports = { createTour, getAllTours, getTour, updateTour, deleteTour};
+module.exports = { createTour, getAllTours, getTour, updateTour, deleteTour,aliasTour};
