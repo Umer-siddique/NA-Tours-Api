@@ -82,8 +82,37 @@ const getAllTours = async(req, res) => {
         queryStr=JSON.parse(queryStr.replace(/\b(lt|lte|gt|gte)\b/g, match=>`$${match}`))
         // console.log(queryStr)
 
+        
         // EXECUTE QUERY
-        const query=Tour.find(queryStr)
+        let query=Tour.find(queryStr)
+
+        // SORT QUERY
+        if(req.query.sort){
+            const sortBy=req.query.sort.split(',').join(' ');
+            console.log(sortBy)
+            query=query.sort(sortBy);
+        }else{
+            query=query.sort('-createdAt')
+        }
+
+        // LIMITING FIELDS QUERY
+        if(req.query.fields){
+            const fields=req.query.fields.split(',').join(' ');
+            console.log(fields);
+            query=query.select(fields);
+        }else{
+            query=query.select('-__v')
+        }
+
+        // PAGINATION QUERY
+        const page=req.query.page*1||1;
+        const limit=req.query.limit*1||100;
+
+        const skip=(page-1)*limit;
+
+        query=query.skip(skip).limit(limit);
+
+        console.log(req.query)
         const tours=await query;
          
         // SEND RESPOSNSE
