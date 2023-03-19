@@ -9,13 +9,14 @@ const createToken = (_id) => {
 
 exports.signupUser = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, passwordChangedAt } =
+    const { name, email, password, confirmPassword,role,passwordChangedAt } =
       req.body;
     const newUser = await User.signup(
       name,
       email,
       password,
       confirmPassword,
+      role,
       passwordChangedAt
     );
 
@@ -102,7 +103,7 @@ exports.authCheckMiddleware = async (req, res, next) => {
   }
 
   // CHECK IF THE PASSWORD CHANGED AFTER LOGGED IN
-  const isPasswordChanged = freshUser.passwordChangedAfter(decoded.iat);
+  const isPasswordChanged = await freshUser.passwordChangedAfter(decoded.iat);
 
   if (isPasswordChanged) {
     return res.status(401).json({
@@ -114,4 +115,16 @@ exports.authCheckMiddleware = async (req, res, next) => {
   req.user = freshUser;
 
   next();
+};
+
+exports.authPermissionMiddleware = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+       return res.status(403).json({
+        status: "fail",
+        message: "You don't have permission to access this resource.",
+      });
+    }
+    next();
+  };
 };

@@ -42,6 +42,11 @@ const userSchema = new mongoose.Schema(
         message: "Password mismatch!",
       },
     },
+    role:{
+       type:String,
+       enum:["user","admin","superadmin"],
+       default:"user"
+    },
     passwordChangedAt: {
       type: Date,
     },
@@ -67,13 +72,14 @@ userSchema.statics.signup = async function (
   email,
   password,
   confirmPassword,
+  role,
   passwordChangedAt
 ) {
   const userExist = await this.findOne({ email });
   if (userExist) {
     throw Error("User already associated with this email!");
   }
-  const _user = await this.create({ name, email, password, confirmPassword,passwordChangedAt });
+  const _user = await this.create({ name, email, password, confirmPassword,role,passwordChangedAt });
   return _user;
 };
 
