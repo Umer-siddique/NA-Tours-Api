@@ -6,7 +6,7 @@ const MONGO_URI=process.env.NODE_ENV==="development"? process.env.LOCAL_MONGO_UR
 const connectDb=async()=>{
     try {
        const conn= await mongoose.connect(MONGO_URI)
-       console.log(`Connected to Database!`);
+       console.log(`Connected to Database ${conn.connections[0].host}`);
     } catch (error) {
         console.log(error)
         process.exit(1);

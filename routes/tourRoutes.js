@@ -1,5 +1,6 @@
 const express=require("express")
 const {createTour,getAllTours,getTour,updateTour,deleteTour,aliasTour}=require("../controller/tourController")
+const authController=require("../controller/authController");
 
 const router=express.Router()
 
@@ -9,7 +10,7 @@ const router=express.Router()
 router.route("/top-5-cheap").get(aliasTour,getAllTours)
 
 router.route("/")
-.get(getAllTours)
+.get(authController.authCheckMiddleware,getAllTours)
 // .post(checkBody,createTour)
 .post(createTour)
 
