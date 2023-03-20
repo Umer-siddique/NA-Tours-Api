@@ -10,9 +10,11 @@ router.route("/signup").post(authController.signupUser)
 // LOGIN
 router.route("/login").post(authController.loginUser)
 
-// USER ACCESS ROUTES
+router.route("/forgotpassword").post(authController.forgotPassword)
+router.route("/resetpassword/:token").patch(authController.resetPassword)
+
+// USER DATA ROUTES
 router.route("/")
-.post(userController.createUser)
 .get(userController.getAllUser);
 
 router.route("/:id")

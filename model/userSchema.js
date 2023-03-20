@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 
 const userSchema = new mongoose.Schema(
   {
@@ -42,14 +43,16 @@ const userSchema = new mongoose.Schema(
         message: "Password mismatch!",
       },
     },
-    role:{
-       type:String,
-       enum:["user","admin","superadmin"],
-       default:"user"
+    role: {
+      type: String,
+      enum: ["user", "admin", "superadmin"],
+      default: "user",
     },
     passwordChangedAt: {
       type: Date,
     },
+    passwordResetToken: String,
+    passwordResetExpires: Date,
   },
   { timestamps: true }
 );
@@ -66,6 +69,15 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+// DOCUMENT MIDDLEWARE FOR UPDATING PASSWORD CHANGED_AT PROPERTY
+userSchema.pre("save", function(next){
+   if(!this.isModified("password") || this.isNew) return next();
+
+   this.passwordChangedAt=Date.now()-1000;
+
+   next();
+})
+
 // MONGOOSE STATISTICS METHOD FOR SIGNUP
 userSchema.statics.signup = async function (
   name,
@@ -79,7 +91,14 @@ userSchema.statics.signup = async function (
   if (userExist) {
     throw Error("User already associated with this email!");
   }
-  const _user = await this.create({ name, email, password, confirmPassword,role,passwordChangedAt });
+  const _user = await this.create({
+    name,
+    email,
+    password,
+    confirmPassword,
+    role,
+    passwordChangedAt,
+  });
   return _user;
 };
 
@@ -91,12 +110,28 @@ userSchema.methods.isCorrectPassword = async function (
   return await bcrypt.compare(enteredPassowrd, userPassword);
 };
 
-userSchema.methods.passwordChangedAfter = function(jwtTimeStamp) {
+userSchema.methods.passwordChangedAfter = function (jwtTimeStamp) {
   if (this.passwordChangedAt) {
-    const _passwordChangedAt= parseInt(this.passwordChangedAt.getTime()/1000 ,10);
+    const _passwordChangedAt = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
     return jwtTimeStamp < _passwordChangedAt;
   }
   return false;
+};
+
+userSchema.methods.createPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 module.exports = mongoose.model("User", userSchema);
