@@ -17,6 +17,8 @@ router.route("/resetpassword/:token").patch(authController.resetPassword)
 router.route("/")
 .get(userController.getAllUser);
 
+router.route("/updateMe").patch(userController.updateMe);
+
 router.route("/:id")
 .get(userController.getUser)
 .patch(userController.updateUser)

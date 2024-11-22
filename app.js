@@ -9,11 +9,13 @@ const app=express()
 // GLOBAL MIDDLEWARE
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
+app.use(express.static(`${__dirname}/public`))
 app.use(cors({
   origin:"*",
   methods:"GET,POST,PUT,PATCH,DELETE",
   credentials:true
 }))
+
 //FOR SERVING STATIC FILES
 // app.use(express.static("example_path:__dirname/public")) 
 
